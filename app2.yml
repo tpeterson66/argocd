@@ -1,0 +1,45 @@
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: app2
+  labels:
+    istio-injection: enabled
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysite-nginx-service
+  namespace: app2
+  labels:
+    app: nginx
+    service: nginx
+spec:
+  ports:
+  - port: 80
+    name: http
+  selector:
+    app: nginx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysite-nginx-deployment
+  namespace: app2
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
